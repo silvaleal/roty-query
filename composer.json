@@ -1,0 +1,20 @@
+{
+    "name": "silvaleal/rotyquery",
+    "license": "MIT",
+    "description": "Construtor de Query Builders",
+    "version": "0.0.1",
+    "autoload": {
+        "psr-4": {
+            "RotyQuery\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "silvaleal",
+            "email": "me@silvaleal.dev"
+        }
+    ],
+    "require": {
+        "php": "^8.0"
+    }
+}

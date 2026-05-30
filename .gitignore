@@ -1,0 +1,5 @@
+composer.lock
+.env
+database.db
+vendor/
+tests/
