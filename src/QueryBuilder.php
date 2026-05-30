@@ -1,6 +1,6 @@
 <?php
 
-namespace RotyPHP;
+namespace RotyQuery;
 
 class QueryBuilder
 {
