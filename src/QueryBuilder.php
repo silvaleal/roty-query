@@ -8,14 +8,22 @@ class QueryBuilder
     protected string $type = '';
     protected array $data = [];
     protected array $wheres = [];
+    protected array $joins = [];
     protected ?int $limit;
     protected ?string $table;
     protected string $columns = '*';
 
     public function q_builder()
     {
-        if ($this->query === '') {
-            return '';
+        if (!empty($this->joins)) {
+            $joins = [];
+
+            foreach ($this->joins as $key => $value) {
+                $joins[] = $value;
+            }
+
+            $this->query .= " ". implode(' ', $joins);
+
         }
 
         if (!empty($this->wheres)) {
