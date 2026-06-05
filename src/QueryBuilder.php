@@ -52,7 +52,7 @@ class QueryBuilder
     }
 
     public function q_join(string $table, string $key, string $field) {
-        $this->query .= " JOIN {$table} ON {$key} = {$field}";
+        $this->joins[] = "JOIN {$table} ON {$key} = {$field}";
         return $this;
     }
 
