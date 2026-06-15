@@ -30,8 +30,14 @@ class ModelBuilder
         if (!empty($this->wheres)) {
             $wheres = [];
             foreach ($this->wheres as $key => $value) {
-                $quoted = is_numeric($value) ? $value : "'" . addslashes((string) $value) . "'";
-                $wheres[] = "{$key} = {$quoted}";
+                $parts = explode(' ', $value);
+
+                $column = $parts[0];
+                $symbol = $parts[1];
+                $value = $parts[2];
+
+                $quoted = is_numeric($value) ? $value : "'" . (string) $value . "'";
+                $wheres[] = "{$column} {$symbol} {$quoted}";
             }
 
             if (stripos($this->query, ' WHERE ') === false) {
@@ -62,7 +68,7 @@ class ModelBuilder
         return $this;
     }
 
-    public function q_order(string $column, string $order="DESC")
+    public function q_order(string $column, string $order = "DESC")
     {
         $this->order = "$column $order";
         return $this;
@@ -124,9 +130,9 @@ class ModelBuilder
         return $this;
     }
 
-    public function q_where(string $column, int|string $value)
+    public function q_where(string $column, int|string $value, string $symbol = "=", )
     {
-        $this->wheres[$column] = $value;
+        $this->wheres[$column] = "$column $symbol $value";
         return $this;
     }
 
