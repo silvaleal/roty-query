@@ -9,4 +9,4 @@ $query->q_setTable("user");
 $query->q_select();
 $query->q_order("id");
 
-print_r($query->q_builder()); // SELECT * FROM user WHERE role = 'user'
+print_r($query->q_builder()); // SELECT * FROM user ORDER BY id DESC
