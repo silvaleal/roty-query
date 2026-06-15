@@ -2,13 +2,14 @@
 
 namespace RotyQuery;
 
-class QueryBuilder
+class ModelBuilder
 {
     protected string $query = '';
     protected string $type = '';
     protected array $data = [];
     protected array $wheres = [];
     protected array $joins = [];
+    protected ?string $order;
     protected ?int $limit;
     protected ?string $table;
     protected string $columns = '*';
@@ -22,14 +23,14 @@ class QueryBuilder
                 $joins[] = $value;
             }
 
-            $this->query .= " ". implode(' ', $joins);
+            $this->query .= " " . implode(' ', $joins);
 
         }
 
         if (!empty($this->wheres)) {
             $wheres = [];
             foreach ($this->wheres as $key => $value) {
-                $quoted = is_numeric($value) ? $value : "'" . addslashes((string)$value) . "'";
+                $quoted = is_numeric($value) ? $value : "'" . addslashes((string) $value) . "'";
                 $wheres[] = "{$key} = {$quoted}";
             }
 
@@ -38,6 +39,10 @@ class QueryBuilder
             } else {
                 $this->query .= ' AND ' . implode(' AND ', $wheres);
             }
+        }
+
+        if (isset($this->order)) {
+            $this->query .= " ORDER BY $this->order";
         }
 
         return $this->query;
@@ -51,8 +56,15 @@ class QueryBuilder
         return $this;
     }
 
-    public function q_join(string $table, string $key, string $field) {
+    public function q_join(string $table, string $key, string $field)
+    {
         $this->joins[] = "JOIN {$table} ON {$key} = {$field}";
+        return $this;
+    }
+
+    public function q_order(string $column, string $order="DESC")
+    {
+        $this->order = "$column $order";
         return $this;
     }
 
@@ -118,11 +130,13 @@ class QueryBuilder
         return $this;
     }
 
-    public function q_getQuery() {
+    public function q_getQuery()
+    {
         return $this->query;
     }
 
-    public function q_setTable($table) {
+    public function q_setTable($table)
+    {
         $this->table = $table;
     }
 }
