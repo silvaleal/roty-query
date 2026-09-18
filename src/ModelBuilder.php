@@ -2,6 +2,8 @@
 
 namespace RotyQuery;
 
+use Exception;
+
 class ModelBuilder
 {
     protected string $query = '';
@@ -51,6 +53,10 @@ class ModelBuilder
             $this->query .= " ORDER BY $this->order";
         }
 
+        if (isset($this->limit)) {
+            $this->query .= " LIMIT $this->limit";
+        }
+
         return $this->query;
     }
 
@@ -71,6 +77,16 @@ class ModelBuilder
     public function q_order(string $column, string $order = "DESC")
     {
         $this->order = "$column $order";
+        return $this;
+    }
+
+    public function q_limit(int $num)
+    {
+        if ($num <= 0) {
+            throw new Exception("Invalid limit. ($num)");
+        }
+
+        $this->limit = $num;
         return $this;
     }
 
