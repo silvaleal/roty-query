@@ -2,7 +2,7 @@
     "name": "silvaleal/rotyquery",
     "license": "MIT",
     "description": "Construtor de Query Builders",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "autoload": {
         "psr-4": {
             "RotyQuery\\": "src/"
