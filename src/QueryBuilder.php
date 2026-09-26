@@ -4,7 +4,7 @@ namespace RotyQuery;
 
 use Exception;
 
-class ModelBuilder
+trait QueryBuilder
 {
     protected string $query = '';
     protected string $type = '';
@@ -150,15 +150,5 @@ class ModelBuilder
     {
         $this->wheres[$column] = "$column $symbol $value";
         return $this;
-    }
-
-    public function q_getQuery()
-    {
-        return $this->query;
-    }
-
-    public function q_setTable($table)
-    {
-        $this->table = $table;
     }
 }

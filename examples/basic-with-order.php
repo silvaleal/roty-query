@@ -1,10 +1,10 @@
 <?php
 
-use RotyQuery\ModelBuilder;
+use RotyQuery\ModelBase;
 
-require __DIR__."/../src/ModelBuilder.php";
+require __DIR__."/../vendor/autoload.php";
 
-$query = new ModelBuilder();
+$query = new ModelBase();
 $query->q_setTable("user");
 $query->q_select();
 $query->q_order("id");

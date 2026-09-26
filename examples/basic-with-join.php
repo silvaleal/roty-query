@@ -1,10 +1,11 @@
 <?php
 
-use RotyQuery\ModelBuilder;
+use RotyQuery\ModelBase;
 
-require __DIR__."/../src/ModelBuilder.php";
 
-$query = new ModelBuilder();
+require __DIR__."/../vendor/autoload.php";
+
+$query = new ModelBase();
 $query->q_setTable("user");
 $query->q_select();
 $query->q_join("courses", "courses.id", "user.courseId");
