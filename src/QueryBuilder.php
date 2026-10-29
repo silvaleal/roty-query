@@ -8,7 +8,7 @@ trait QueryBuilder
 {
     protected string $query = '';
     protected string $type = '';
-    protected array $data = [];
+    public array $data = [];
     public array $wheres = [];
     protected array $joins = [];
     protected ?string $order;
@@ -17,7 +17,9 @@ trait QueryBuilder
     protected string $columns = '*';
 
     public function q_builder()
-    {
+    {       
+        $query = $this->query;
+
         if (!empty($this->joins)) {
             $joins = [];
 
@@ -25,8 +27,7 @@ trait QueryBuilder
                 $joins[] = $value;
             }
 
-            $this->query .= " " . implode(' ', $joins);
-
+            $query .= " " . implode(' ', $joins);
         }
 
         if (!empty($this->wheres)) {
@@ -41,22 +42,22 @@ trait QueryBuilder
                 $wheres[] = "{$column} {$symbol} {$value}";
             }
 
-            if (stripos($this->query, ' WHERE ') === false) {
-                $this->query .= ' WHERE ' . implode(' AND ', $wheres);
+            if (stripos($query, ' WHERE ') === false) {
+                $query .= ' WHERE ' . implode(' AND ', $wheres);
             } else {
-                $this->query .= ' AND ' . implode(' AND ', $wheres);
+                $query .= ' AND ' . implode(' AND ', $wheres);
             }
         }
 
         if (isset($this->order)) {
-            $this->query .= " ORDER BY $this->order";
+            $query .= " ORDER BY $this->order";
         }
 
         if (isset($this->limit)) {
-            $this->query .= " LIMIT $this->limit";
+            $query .= " LIMIT $this->limit";
         }
 
-        return $this->query;
+        return $query;
     }
 
     public function q_select(string $columns = '*')
@@ -147,10 +148,9 @@ trait QueryBuilder
 
     public function q_where(string $column, int|string $value, string $symbol = "=", )
     {
-        $this->wheres[$column] = "$column $symbol :$column";
+        $this->wheres[$column] = "$column $symbol :". str_replace(".", "_", $column);
 
-        $results[":{$column}"] = $value;
-        $this->data["wheres"] = $results;
+        $this->data["wheres"][str_replace(".", "_", $column)] = $value;
 
         return $this;
     }

@@ -1,8 +1,8 @@
 {
     "name": "silvaleal/rotyquery",
     "license": "MIT",
-    "description": "Construtor de Query Builders",
-    "version": "0.0.8.1",
+    "description": "roty-query provides a simple, fluent API to build SQL queries without writing raw SQL by hand.",
+    "version": "0.0.9",
     "autoload": {
         "psr-4": {
             "RotyQuery\\": "src/"
