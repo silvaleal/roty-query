@@ -9,7 +9,7 @@ trait QueryBuilder
     protected string $query = '';
     protected string $type = '';
     protected array $data = [];
-    protected array $wheres = [];
+    public array $wheres = [];
     protected array $joins = [];
     protected ?string $order;
     protected ?int $limit;
@@ -38,8 +38,7 @@ trait QueryBuilder
                 $symbol = $parts[1];
                 $value = $parts[2];
 
-                $quoted = is_numeric($value) ? $value : "'" . (string) $value . "'";
-                $wheres[] = "{$column} {$symbol} {$quoted}";
+                $wheres[] = "{$column} {$symbol} {$value}";
             }
 
             if (stripos($this->query, ' WHERE ') === false) {
@@ -148,7 +147,11 @@ trait QueryBuilder
 
     public function q_where(string $column, int|string $value, string $symbol = "=", )
     {
-        $this->wheres[$column] = "$column $symbol $value";
+        $this->wheres[$column] = "$column $symbol :$column";
+
+        $results[":{$column}"] = $value;
+        $this->data["wheres"] = $results;
+
         return $this;
     }
 }
