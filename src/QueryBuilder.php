@@ -172,17 +172,12 @@ trait QueryBuilder
             foreach ($value as $key) {
                 $data[":$column" . "_$key"] = $key;
             }
-            // print_r(array_keys($data));
-            // die;
 
             $this->wheres["where_in"] = "$column IN " . "(" . implode(', ', array_keys($data)) . ")";
 
             foreach ($data as $key => $value) {
                 $this->data["wheres"][$key] = $value;
-                // print_r("$key => $value");
-                // echo "\n";
             }
-                // die;
 
             return $this;
         }
