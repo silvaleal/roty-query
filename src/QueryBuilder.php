@@ -3,6 +3,7 @@
 namespace RotyQuery;
 
 use Exception;
+use InvalidArgumentException;
 
 trait QueryBuilder
 {
@@ -17,7 +18,7 @@ trait QueryBuilder
     protected string $columns = '*';
 
     public function q_builder()
-    {       
+    {
         $query = $this->query;
 
         if (!empty($this->joins)) {
@@ -32,7 +33,13 @@ trait QueryBuilder
 
         if (!empty($this->wheres)) {
             $wheres = [];
+
             foreach ($this->wheres as $key => $value) {
+                if ($key == 'where_in') {
+                    $wheres[] = "$value";
+                    continue;
+                }
+
                 $parts = explode(' ', $value);
 
                 $column = $parts[0];
@@ -146,11 +153,44 @@ trait QueryBuilder
         return $this;
     }
 
-    public function q_where(string $column, int|string $value, string $symbol = "=", )
+    public function q_where(string $column, int|string|null|array $value, string $symbol = "=", )
     {
-        $this->wheres[$column] = "$column $symbol :". str_replace(".", "_", $column);
 
-        $this->data["wheres"][str_replace(".", "_", $column)] = $value;
+        if ($value === null) {
+            $operador = match ($symbol) {
+                "=" => "IS",
+                "!=" => "IS NOT",
+                default => throw new InvalidArgumentException(
+                    "Invalid operator for NULL value."
+                )
+            };
+
+            $this->wheres[$column] = "$column $operador NULL";
+            return $this;
+
+        } elseif (is_array($value)) {
+            foreach ($value as $key) {
+                $data[":$column" . "_$key"] = $key;
+            }
+            // print_r(array_keys($data));
+            // die;
+
+            $this->wheres["where_in"] = "$column IN " . "(" . implode(', ', array_keys($data)) . ")";
+
+            foreach ($data as $key => $value) {
+                $this->data["wheres"][$key] = $value;
+                // print_r("$key => $value");
+                // echo "\n";
+            }
+                // die;
+
+            return $this;
+        }
+
+        $parameter = str_replace(".", "_", $column);
+
+        $this->wheres[$column] = "$column $symbol :$parameter";
+        $this->data["wheres"][$parameter] = $value;
 
         return $this;
     }
