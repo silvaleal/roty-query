@@ -1,15 +1,19 @@
 <?php
 
-use RotyQuery\ModelBase;
+use RotyQuery\QueryBuilder;
 
-require __DIR__."/../vendor/autoload.php";
+require __DIR__ . "/../vendor/autoload.php";
 
-$query = new ModelBase();
-$query->q_setTable("user");
+class User extends QueryBuilder
+{
+    protected ?string $table = "user";
+}
 
-$query->q_insert([
-    "id"=>1,
-    "user"=>"silvaleal"
+$user = new User();
+    
+$user->q_insert([
+    "id" => 1,
+    "user" => "silvaleal",
 ]);
 
-print_r($query);
+print_r($user->q_builder());

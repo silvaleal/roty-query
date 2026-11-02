@@ -1,13 +1,18 @@
 <?php
 
-use RotyQuery\ModelBase;
+use RotyQuery\QueryBuilder;
 
-require __DIR__."/../vendor/autoload.php";
+require __DIR__ . "/../vendor/autoload.php";
 
-$query = new ModelBase();
-$query->q_setTable("user");
-$query->q_select();
-$query->q_limit(10);
-$query->q_where('role', 'user');
+class User extends QueryBuilder
+{
+    protected ?string $table = "user";
+}
 
-print_r($query->q_builder()); // SELECT * FROM user WHERE role = 'user'
+$user = new User();
+
+$user->q_select();
+$user->q_limit(10);
+$user->q_where('role', 'user');
+
+print_r($user->q_builder()); // SELECT * FROM user WHERE role = :role LIMIT 10

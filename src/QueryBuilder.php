@@ -2,11 +2,11 @@
 
 namespace RotyQuery;
 
-use Exception;
-use InvalidArgumentException;
-
-trait QueryBuilder
+abstract class QueryBuilder
 {
+    use QueryOperator;
+    use QueryConsulter;
+
     protected string $query = '';
     protected string $type = '';
     public array $data = [];
@@ -65,128 +65,5 @@ trait QueryBuilder
         }
 
         return $query;
-    }
-
-    public function q_select(string $columns = '*')
-    {
-        $this->columns = $columns;
-        $this->type = "select";
-        $this->query = "SELECT {$this->columns} FROM {$this->table}";
-        return $this;
-    }
-
-    public function q_join(string $table, string $key, string $field)
-    {
-        $this->joins[] = "JOIN {$table} ON {$key} = {$field}";
-        return $this;
-    }
-
-    public function q_order(string $column, string $order = "DESC")
-    {
-        $this->order = "$column $order";
-        return $this;
-    }
-
-    public function q_limit(int $num)
-    {
-        if ($num <= 0) {
-            throw new Exception("Invalid limit. ($num)");
-        }
-
-        $this->limit = $num;
-        return $this;
-    }
-
-    public function q_insert(array $data)
-    {
-        $columns = [];
-        $values = [];
-        $results = [];
-
-        foreach ($data as $key => $value) {
-            $columns[] = $key;
-            $values[] = ":{$key}";
-            $results[":{$key}"] = $value;
-        }
-        $columns = implode(",", $columns);
-        $values = implode(",", $values);
-
-        $this->type = "insert";
-        $this->query = "INSERT INTO {$this->table} (" . $columns . ") VALUES (" . $values . ")";
-        $this->data["inserters"] = $results;
-        return $this;
-    }
-
-    public function q_update(array $data)
-    {
-        $setters = [];
-        $results = [];
-
-        foreach ($data as $key => $value) {
-            $setters[] = "{$key} = :{$key}";
-            $results[":{$key}"] = $value;
-        }
-
-        $this->type = "update";
-        $this->query = "UPDATE {$this->table} SET " . implode(',', $setters);
-        $this->data['updaters'] = $results;
-        return $this;
-    }
-
-    public function q_del(array $data)
-    {
-        $columns = [];
-        $values = [];
-        $results = [];
-
-        foreach ($data as $key => $value) {
-            $columns[] = $key;
-            $values[] = ":{$key}";
-            $results[":{$key}"] = $value;
-        }
-        $columns = implode(",", $columns);
-        $values = implode(",", $values);
-
-        $this->type = "delete";
-        $this->query = "DELETE FROM {$this->table} WHERE {$columns} = {$values}";
-        $this->data["deletories"] = $results;
-        return $this;
-    }
-
-    public function q_where(string $column, int|string|null|array $value, string $symbol = "=", )
-    {
-
-        if ($value === null) {
-            $operador = match ($symbol) {
-                "=" => "IS",
-                "!=" => "IS NOT",
-                default => throw new InvalidArgumentException(
-                    "Invalid operator for NULL value."
-                )
-            };
-
-            $this->wheres[$column] = "$column $operador NULL";
-            return $this;
-
-        } elseif (is_array($value)) {
-            foreach ($value as $key) {
-                $data[":$column" . "_$key"] = $key;
-            }
-
-            $this->wheres["where_in"] = "$column IN " . "(" . implode(', ', array_keys($data)) . ")";
-
-            foreach ($data as $key => $value) {
-                $this->data["wheres"][$key] = $value;
-            }
-
-            return $this;
-        }
-
-        $parameter = str_replace(".", "_", $column);
-
-        $this->wheres[$column] = "$column $symbol :$parameter";
-        $this->data["wheres"][$parameter] = $value;
-
-        return $this;
     }
 }

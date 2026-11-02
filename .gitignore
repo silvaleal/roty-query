@@ -3,3 +3,6 @@ composer.lock
 database.db
 vendor/
 tests/
+# PHP CS Fixer configuration
+/.php-cs-fixer.cache
+/.php-cs-fixer.php

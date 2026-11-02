@@ -1,13 +1,18 @@
 <?php
 
-use RotyQuery\ModelBase;
+use RotyQuery\QueryBuilder;
 
-require __DIR__."/../vendor/autoload.php";
+require __DIR__ . "/../vendor/autoload.php";
 
-$query = new ModelBase();
-$query->q_setTable("user");
-$query->q_select();
-$query->q_where("id", 2);
-$query->q_where("role", "admin");
+class User extends QueryBuilder
+{
+    protected ?string $table = "user";
+}
 
-print_r($query->q_builder());
+$user = new User();
+
+$user->q_select();
+$user->q_where("id", 2);
+$user->q_where("role", "admin");
+
+print_r($user->q_builder()); // SELECT * FROM user WHERE id = :id AND role = :role
