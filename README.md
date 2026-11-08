@@ -1,10 +1,8 @@
 # roty-query
 
-A lightweight SQL Query Builder for PHP.
-
 **roty-query** provides a simple, fluent API to build SQL queries without writing raw SQL by hand. It is part of [RotyPHP](https://rotyphp.silvaleal.dev), an ORM for PHP, and works as the query-building foundation behind it.
 
-> ⚠️ This project is under active development. The API may change between releases.
+> This project is under active development. The API may change between releases.
 
 ## Requirements
 
@@ -20,12 +18,16 @@ composer require silvaleal/rotyquery
 ## Usage
 
 ```php
-use RotyQuery\ModelBase;
+use RotyQuery\QueryBuilder;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$query = new ModelBase();
-$query->q_setTable("user");
+class User extends QueryBuilder
+{
+    protected string $table = 'user';
+}
+
+$query = new User();
 $query->q_select();
 $query->q_where('role', 'user');
 

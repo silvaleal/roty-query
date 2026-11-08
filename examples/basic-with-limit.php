@@ -6,7 +6,7 @@ require __DIR__ . "/../vendor/autoload.php";
 
 class User extends QueryBuilder
 {
-    protected ?string $table = "user";
+    protected string $table = "user";
 }
 
 $user = new User();

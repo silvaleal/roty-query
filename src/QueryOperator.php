@@ -2,10 +2,17 @@
 
 namespace RotyQuery;
 
+use Exception;
+
 trait QueryOperator
 {
     public function q_select(string $columns = '*')
     {
+
+        if (!$this->table) {
+            throw new Exception("Table not insered");
+        }
+
         $this->columns = $columns;
         $this->type = "select";
         $this->query = "SELECT {$this->columns} FROM {$this->table}";
@@ -21,7 +28,7 @@ trait QueryOperator
         foreach ($data as $key => $value) {
             $columns[] = $key;
             $values[] = ":{$key}";
-            $results[":{$key}"] = $value;
+            $results["{$key}"] = $value;
         }
         $columns = implode(",", $columns);
         $values = implode(",", $values);
@@ -39,7 +46,7 @@ trait QueryOperator
 
         foreach ($data as $key => $value) {
             $setters[] = "{$key} = :{$key}";
-            $results[":{$key}"] = $value;
+            $results["{$key}"] = $value;
         }
 
         $this->type = "update";
@@ -48,23 +55,12 @@ trait QueryOperator
         return $this;
     }
 
-    public function q_del(array $data)
+    public function q_del()
     {
-        $columns = [];
-        $values = [];
-        $results = [];
-
-        foreach ($data as $key => $value) {
-            $columns[] = $key;
-            $values[] = ":{$key}";
-            $results[":{$key}"] = $value;
-        }
-        $columns = implode(",", $columns);
-        $values = implode(",", $values);
-
+        
         $this->type = "delete";
-        $this->query = "DELETE FROM {$this->table} WHERE {$columns} = {$values}";
-        $this->data["deletories"] = $results;
+        $this->query = "DELETE FROM {$this->table}";
+        // $this->data["deletories"] = $results;
         return $this;
     }
 }
